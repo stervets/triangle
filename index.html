@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html ng-app="TriangleDemo">
+  <head>
+    <title>Triangle demo</title>
+  </head>
+  <script src="bower_components/angularjs/angular.min.js"></script>
+  <script src="bower_components/underscore/underscore-min.js"></script>
+  <script src="triangle.js"></script>
+  <script src="js/app.js"></script>
+  <script id="jsRoomTemplate" type="text/ng-template">
+    <div class="room">
+      <div class="room-header"><a ng-show="!room.$edit" ng-click="onHeaderClick()" class="header-link">{{room.name}}</a>
+        <form ng-show="room.$edit" ng-submit="room.$edit=false">
+          <input ng-model="room.name">
+          <input type="submit" value="ok">
+        </form>
+        <div class="button">Add human</div>
+        <div ng-show="removable" class="button">X</div>
+      </div>
+      <div ng-transclude class="room-body"></div>
+    </div>
+  </script>
+</html>
+<body ng-controller="MainController">
+  <room room="{roomId: null, name:'Homeless'}">here is rooms</room>
+</body>

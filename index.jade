@@ -1,0 +1,23 @@
+doctype html
+html(ng-app='TriangleDemo')
+    head
+        title Triangle demo
+    script(src='bower_components/angularjs/angular.min.js')
+    script(src='bower_components/underscore/underscore-min.js')
+    script(src='triangle.js')
+    script(src='js/app.js')
+
+    script#jsRoomTemplate(type='text/ng-template')
+        div.room
+            div.room-header
+                a.header-link(ng-show="!room.$edit", ng-click='onHeaderClick()')
+                    {{room.name}}
+                form(ng-show="room.$edit", ng-submit="room.$edit=false")
+                    input(ng-model="room.name")
+                    input(type='submit', value='ok')
+                div.button Add human
+                div.button(ng-show="removable") X
+            div.room-body(ng-transclude)
+
+body(ng-controller='MainController')
+    room(room="{roomId: null, name:'Homeless'}") here is rooms

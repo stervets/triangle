@@ -1,0 +1,27 @@
+{
+  "name": "triangle",
+  "main": "triangle.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/stervets/triangle",
+  "authors": [
+    "Mikhail Lisov <stervets@gmail.com>"
+  ],
+  "description": "Shell library for AngularJS",
+  "keywords": [
+    "triangle",
+    "triagnlejs",
+    "angularjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.7.0",
+    "angularjs": "~1.3.0"
+  }
+}
