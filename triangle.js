@@ -2,7 +2,7 @@
  * Shell for angular
  * requires angular, underscore
  *
- * last revision: 20.10.2014
+ * last revision: 14.11.2014
  */
 (function (window, angular, _) {
     /**
@@ -929,11 +929,10 @@
             }
         });
 
-
         /**
          * Init angular.directive
          */
-        this.triangle.angular.directive(this.name, this.inject.concat([
+        this.triangle.angular.directive(this.name, injects.concat([
             (function (directive, injects, subs) {
                 return function () {
                     var args = arguments;
