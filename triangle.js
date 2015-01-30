@@ -279,7 +279,10 @@
                 separator: function(item){
                     return true;
                 },
-
+                // collection defaults
+                defaults: {
+                    url: '/serverSyncUrl'
+                }
                 }
              *
              * @param params
@@ -305,7 +308,7 @@
                     return false;
                 }
 
-                //params.defaults = params.defaults || params.collection.defaults;
+                //params.defaults = params.defaults || null;
                 params.name = params.name || params.collection.name;
                 params.relation = params.relation || PRIVATE.relation;
                 params.separator = params.separator || PRIVATE.separator;
@@ -341,7 +344,7 @@
                 _.defaults(item, angular.copy(this.defaults));
 
                 this.$generatedCollections.forEach(function (relation) {
-                    var childCollection = item[relation.name] = Triangle.collection(relation.collection.name + '=>' + this.name + '[' + item.id + '].' + relation.name);
+                    var childCollection = item[relation.name] = Triangle.collection(relation.collection.name + '=>' + this.name + '[' + item.id + '].' + relation.name, relation.defaults);
                     var filter = {};
                     //childCollection.parent = item;
                     childCollection.$parentCollection = this;
@@ -585,8 +588,8 @@
                 }
 
                 if (angular.isFunction(handler) && !_(this.$events[eventName]).find(function (event) {
-                    return handler == event[0];
-                })) {
+                        return handler == event[0];
+                    })) {
                     this.$events[eventName].push([handler, context || this]);
                 }
             },
@@ -599,8 +602,8 @@
                 if (handler) {
                     var found = null;
                     if ((found = _(this.$events[eventName])).find(function (event) {
-                        return handler == event[0];
-                    })) {
+                            return handler == event[0];
+                        })) {
                         this.$events[eventName].splice(this.$events[eventName].indexOf(found), 1);
                     }
                 } else {
@@ -1191,6 +1194,7 @@
         saving: false,
 
         load: function (callback) {
+
             this.loading = true;
 
             this.$http.post(this.url, {
@@ -1207,7 +1211,9 @@
         onBeforeLoadSuccess: angular.noop,
 
         onLoadSuccess: function (data) {
-            this.reset(data || null);
+            data = data || null;
+            this.reset(data);
+            return data;
         },
 
         onAfterLoadSuccess: angular.noop,
@@ -1353,14 +1359,17 @@
                     if (angular.isObject(factory.collections)) {
                         for (var prop in factory.collections) {
                             factory[prop] = Triangle.collection(prop, factory.collections[prop]);
-                            if (sync) {
-                                for (var k in SYNC) {
-                                    factory[prop][k] = angular.isFunction(SYNC[k]) ? SYNC[k].bind(factory[prop]) : SYNC[k];
-                                }
-                                factory[prop].url = factory.url;
-                                factory[prop].syncFilter = factory.syncFilter;
-                                factory[prop].$http = factory.$http;
-                            }
+                            Triangle.sync(factory.$http, factory[prop], factory.url, factory.syncFilter, factory.syncName || prop);
+                            /*
+                             if (sync) {
+                             for (var k in SYNC) {
+                             factory[prop][k] = angular.isFunction(SYNC[k]) ? SYNC[k].bind(factory[prop]) : SYNC[k];
+                             }
+                             factory[prop].url = factory.url;
+                             factory[prop].syncFilter = factory.syncFilter;
+                             factory[prop].$http = factory.$http;
+                             }
+                             */
                         }
                     }
 
@@ -1370,6 +1379,24 @@
             })(this, sync, factoryInjects, subs)
         ]));
     };
+
+    /**
+     * Append server sync to collection
+     * @param $http Sync object
+     * @param collection
+     * @param url
+     * @param filter hash
+     * @param name syncName
+     */
+    Triangle.sync = function($http, collection, url, filter, name){
+        for (var k in SYNC) {
+            collection[k] = angular.isFunction(SYNC[k]) ? SYNC[k].bind(collection) : SYNC[k];
+        }
+        collection.url = url;
+        collection.syncFilter = filter;
+        collection.syncName = name;
+        collection.$http = $http;
+    }
 
     /**
      * Angular factory shell
