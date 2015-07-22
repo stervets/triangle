@@ -2,7 +2,7 @@
  * Shell for angular
  * requires angular, underscore
  *
- * last revision: 14.11.2014
+ * last revision: 22.07.2015
  */
 (function (window, angular, _) {
     /**
@@ -33,8 +33,6 @@
     Triangle.snakeCase = function (s) {
         s = angular.isString(s) && s.trim() ? s.replace(/[^a-zA-Z0-9]/g, '_', s) : '';
         s = s ? s.replace(/^_+|_+$/g, '') : '';
-
-        //s = s?s.replace(' ', function(t,a,b){return b.toUpperCase();}): '';
         return s;
     };
 
@@ -1360,16 +1358,6 @@
                         for (var prop in factory.collections) {
                             factory[prop] = Triangle.collection(prop, factory.collections[prop]);
                             Triangle.sync(factory.$http, factory[prop], factory.url, factory.syncFilter, factory.syncName || prop);
-                            /*
-                             if (sync) {
-                             for (var k in SYNC) {
-                             factory[prop][k] = angular.isFunction(SYNC[k]) ? SYNC[k].bind(factory[prop]) : SYNC[k];
-                             }
-                             factory[prop].url = factory.url;
-                             factory[prop].syncFilter = factory.syncFilter;
-                             factory[prop].$http = factory.$http;
-                             }
-                             */
                         }
                     }
 
@@ -1635,12 +1623,15 @@
                         if (angular.isObject(routes.default)) {
                             $routeProvider.otherwise(routes.default);
                         }
-                        $locationProvider.html5Mode(true);
+                        $locationProvider.html5Mode({
+                            enabled: true,
+                            requireBase: false,
+                            rewriteLinks: true
+                        });
                     };
                 })(routes)
             ]);
         }
-
     }
 
     window.Triangle = Triangle;
